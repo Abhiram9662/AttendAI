@@ -1,0 +1,43 @@
+
+# Python environments and cache
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Environment secrets
+.env
+.env.*
+!.env.example
+
+# Databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Biometric data and trained model
+ai_model/dataset/
+ai_model/embeddings/private/
+ai_model/weights/private/
+ai_model/trained_models/
+backend/uploads/
+backend/student_photos/
+
+# Frontend dependencies and build
+node_modules/
+frontend/node_modules/
+dist/
+frontend/dist/
+
+# Logs and temporary files
+*.log
+*.tmp
+
+# IDE and operating system
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+ai_model/evaluation_results/
