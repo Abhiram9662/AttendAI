@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState, type FormEvent } from "react"
 import axios from "axios";
 import {
   Camera, CameraOff, ScanFace, ShieldCheck, Users, CalendarDays,
-  RefreshCw, CheckCircle2, XCircle, Clock3, Activity, Upload, Trash2
+  RefreshCw, CheckCircle2, XCircle, Clock3, Activity, Upload
 } from "lucide-react";
 
 const API = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
@@ -94,7 +94,7 @@ export default function App() {
     setPageError("");
     try {
       const [usersResponse, sessionsResponse, healthResponse] = await Promise.all([
-        axios.get<Student[]>(`${API}/api/vision/students`),
+        axios.get<Student[]>(`${API}/api/users`),
         axios.get<AttendanceSession[]>(`${API}/api/sessions`),
         axios.get(`${API}/api/health`)
       ]);
@@ -117,23 +117,10 @@ export default function App() {
 
   useEffect(() => { void loadDashboard(); }, [loadDashboard]);
 
-  async function deleteStudent(student: Student) {
-    const confirmed = window.confirm(
-      `PERMANENTLY DELETE ${student.full_name} (${student.student_id})? This removes the student from the backend database and deletes their attendance records. This action cannot be undone.`
+  function deleteStudent(student: Student) {
+    setStudentMessage(
+      `Delete is disabled in this lightweight prototype. ${student.full_name} (${student.student_id}) and their attendance records have not been changed.`
     );
-    if (!confirmed) return;
-    setStudentMessage("");
-    setPageError("");
-    try {
-      const response = await axios.delete(`${API}/api/vision/students/${encodeURIComponent(student.student_id)}`);
-      setStudentMessage(response.data?.message || `Student ${student.student_id} permanently deleted.`);
-      await loadDashboard();
-    } catch (error) {
-      console.error(error);
-      setPageError(axios.isAxiosError(error)
-        ? (error.response?.data?.detail || "Could not delete this student from the backend.")
-        : "Could not delete this student from the backend.");
-    }
   }
 
   async function startEnrollmentCamera() {
@@ -543,7 +530,7 @@ export default function App() {
             <tbody>{students.map(student => <tr key={student.id}>
               <td>{student.student_id}</td><td>{student.full_name}</td><td>{student.department || "—"}</td>
               <td>{student.section || "—"}</td><td>{student.email}</td>
-              <td><button className="deleteStudentButton" type="button" onClick={() => void deleteStudent(student)} disabled={apiStatus !== "online"} title={`Permanently delete ${student.full_name}`}><Trash2 size={14}/> Delete</button></td>
+              <td><button className="deleteStudentButton" type="button" onClick={() => deleteStudent(student)} title="Deletion is not enabled in the lightweight prototype">Delete unavailable</button></td>
             </tr>)}</tbody></table></div>}
       </section>
 
